@@ -1,0 +1,8 @@
+asyncio
+websockets
+pydantic
+jsonschema
+timed_rotating_text_file
+fastapi
+fastapi_pagination
+uvicorn
