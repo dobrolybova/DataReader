@@ -4,6 +4,7 @@ import os
 from typing import List
 
 from timed_rotating_text_file import TimedRotatingTextFile
+from logger import logger
 
 
 def write(data: json) -> None:
@@ -15,6 +16,7 @@ def write(data: json) -> None:
 def read() -> List[str]:
     file_manes = [f for f in glob.glob("../*.json*")]
     file_manes.reverse()
+    logger.info(f"read data from files: {file_manes}")
     data = ""
     for file_name in file_manes:
         with open(file_name) as fp:

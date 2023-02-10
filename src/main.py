@@ -4,6 +4,7 @@ import file_storage
 import websockets
 from validator import is_message_valid
 from timed_rotating_text_file import TimedRotatingTextFile
+from logger import logger
 
 
 async def main():
@@ -12,15 +13,15 @@ async def main():
             try:
                 response = await websocket.recv()
             except websockets.ConnectionClosedOK:
-                print(f"Connection closed OK")
+                logger.critical(f"Connection closed OK")
             except websockets.ConnectionClosedError:
-                print(f"Connection closed NOK")
+                logger.critical(f"Connection closed NOK")
             if is_message_valid(response):
-                print(response)
+                logger.info(f"{response}")
                 file_storage.write(response)
             else:
-                print(f"Not valid data: {response}")
+                logger.info(f"Not valid data: {response}")
             await asyncio.sleep(1)
 
-
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

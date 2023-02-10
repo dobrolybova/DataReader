@@ -20,4 +20,5 @@ async def get_messages():
 
 add_pagination(app)
 
-uvicorn.run(app)
+if __name__ == "__main__":
+    uvicorn.run(app)

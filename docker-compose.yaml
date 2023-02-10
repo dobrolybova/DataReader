@@ -2,9 +2,9 @@ version: "3.0"
 services:
   main:
     build: .
-    command: python3 src/main.py
+    command: python3 main.py
     network_mode: host
-    working_dir: /DataReader
+    working_dir: /DataReader/src
     volumes:
       - .:/DataReader
   paginator:
