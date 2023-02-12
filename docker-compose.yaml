@@ -7,10 +7,10 @@ services:
     working_dir: /DataReader/src
     volumes:
       - .:/DataReader
-  paginator:
-    build: .
-    command: python3 paginator.py
-    network_mode: host
-    working_dir: /DataReader/src
-    volumes:
-      - .:/DataReader
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: example

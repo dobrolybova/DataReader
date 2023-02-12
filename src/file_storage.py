@@ -4,7 +4,9 @@ import os
 from typing import List
 
 from timed_rotating_text_file import TimedRotatingTextFile
-from logger import logger
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 def write(data: json) -> None:
