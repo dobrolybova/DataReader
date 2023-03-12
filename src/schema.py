@@ -1,8 +1,11 @@
 import json
 from json.decoder import JSONDecodeError
+from logging import getLogger
 
 from pydantic import BaseModel
 from pydantic import ValidationError
+
+logger = getLogger(__name__)
 
 
 class MessageSchema(BaseModel):
@@ -12,15 +15,13 @@ class MessageSchema(BaseModel):
     model: str
 
 
-def is_message_valid(data: json) -> bool:
+def is_schema_matched(data: dict[str, str]) -> bool:
     try:
-        kwargs = json.loads(data)
-    except JSONDecodeError:
+        MessageSchema(**data)
+    except TypeError as error:
+        logger.error(f"{error}")
         return False
-    try:
-        MessageSchema(**kwargs)
-    except TypeError as _error:
-        return False
-    except ValidationError as _error:
+    except ValidationError as error:
+        logger.error(f"{error}")
         return False
     return True
