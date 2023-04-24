@@ -1,9 +1,9 @@
 import glob
 import json
 import os
+from logging import getLogger
 
 from timed_rotating_text_file import TimedRotatingTextFile
-from logging import getLogger
 
 logger = getLogger(__name__)
 

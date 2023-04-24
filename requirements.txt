@@ -7,4 +7,6 @@ fastapi
 fastapi_pagination
 uvicorn
 psycopg2-binary
-peewee
+sqlalchemy
+asyncpg
+fastapi_sqla

@@ -1,38 +1,25 @@
-import json
 from logging import getLogger
 
-from peewee import *
+from config import Base, async_session
+from sqlalchemy import Column, Text, Integer
+from sqlalchemy.orm import sessionmaker
 
 logger = getLogger(__name__)
 
-db = PostgresqlDatabase('messages', user='yulia')
+
+class Messages(Base):
+    __tablename__ = 'messages'
+
+    id = Column(Integer(), primary_key=True)
+    component = Column(Text())
+    country = Column(Text())
+    description = Column(Text())
+    model = Column(Text())
 
 
-class BaseModel(Model):
-    class Meta:
-        database = db
-
-
-class Messages(BaseModel):
-    component = TextField()
-    country = TextField()
-    description = TextField()
-    model = TextField()
-
-    class Meta:
-        table_name = 'messages'
-
-
-def write(data: dict[str, str]) -> None:
+async def write(data: dict[str, str]) -> None:
     logger.debug(f"write message to DB {data}")
-    try:
-        Messages.create(**data)
-    except IntegrityError:
-        logger.error(f"Add not valid data to DB: {data}")
-    except TypeError as ex:
-        logger.error(f"{ex}")
-
-
-if __name__ == "__main__":
-    # db.create_tables([Messages])
-    pass
+    async with async_session() as session:
+        async with session.begin():
+            session.add(Messages(**data))
+            session.commit()
