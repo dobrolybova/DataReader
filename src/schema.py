@@ -22,6 +22,7 @@ class MessagesOut(MessageSchema):
     class Config:
         orm_mode = True
 
+
 def is_schema_matched(data: dict[str, str]) -> bool:
     try:
         MessageSchema(**data)

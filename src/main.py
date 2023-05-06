@@ -4,7 +4,7 @@ from logging import getLogger, basicConfig
 
 import uvicorn
 from config import LOG_LEVEL, LOG_FILE, LOG_FORMAT
-from db_storage import Messages, start_db, get_db
+from db_storage import Messages, get_db
 from fastapi import FastAPI, Depends
 from fastapi_pagination import add_pagination, LimitOffsetPage, bases, paginate
 from file_storage import read
@@ -17,18 +17,15 @@ logger = getLogger(__name__)
 basicConfig(filename=LOG_FILE, filemode='w', level=LOG_LEVEL, format=LOG_FORMAT)
 
 WS_TASK = None
-DB_TASK = None
 
 
 async def startup() -> None:
-    global WS_TASK, DB_TASK
+    global WS_TASK
     WS_TASK = asyncio.create_task(ws_client())
-    DB_TASK = asyncio.create_task(start_db())
 
 
 async def shutdown() -> None:
     WS_TASK.cancel()
-    DB_TASK.cancel()
 
 
 app = FastAPI(

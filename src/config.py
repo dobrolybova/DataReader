@@ -1,8 +1,5 @@
 import os
 
-from sqlalchemy.engine.url import URL
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import declarative_base, sessionmaker
 from enum import Enum
 
 
@@ -29,7 +26,3 @@ DATABASE = {
     'database': 'messages',
     'query': {}
 }
-
-engine = create_async_engine(URL(**DATABASE), future=True, echo=True)
-async_session = sessionmaker(engine, class_=AsyncSession)
-Base = declarative_base()

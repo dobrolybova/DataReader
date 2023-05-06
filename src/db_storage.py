@@ -1,22 +1,17 @@
 from logging import getLogger
 from typing import AsyncIterator
 
-import psycopg2
-from config import DATABASE, Base, async_session, engine, Base, async_session
 from sqlalchemy import Column, Text, Integer
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine.url import URL
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+from config import DATABASE
 
 logger = getLogger(__name__)
 
-sql_commands = (
-        # """
-        # CREATE USER yulia WITH SUPERUSER PASSWORD 'yulia'
-        # """,
-        """
-        CREATE database messages
-        """,
-)
+engine = create_async_engine(URL(**DATABASE), future=True, echo=True)
+async_session = sessionmaker(engine, class_=AsyncSession)
+Base = declarative_base()
 
 
 class Messages(Base):
@@ -27,30 +22,6 @@ class Messages(Base):
     country = Column(Text())
     description = Column(Text())
     model = Column(Text())
-
-
-def create_db(commands: tuple[str]):
-    conn = psycopg2.connect(database="postgres",
-                            user=DATABASE["username"],
-                            password=DATABASE["password"],
-                            host=DATABASE["host"],
-                            port=DATABASE["port"])
-    conn.autocommit = True
-    cursor = conn.cursor()
-    for command in commands:
-        cursor.execute(command)
-    conn.commit()
-    conn.close()
-
-
-async def start_db():
-    try:
-        create_db(sql_commands)
-    except psycopg2.errors.DuplicateDatabase:
-        logger.debug(f"DB messages already exist")
-        pass
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 
 async def get_db() -> AsyncIterator[AsyncSession]:

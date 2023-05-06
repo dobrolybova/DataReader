@@ -10,3 +10,5 @@ psycopg2-binary
 sqlalchemy
 asyncpg
 fastapi_sqla
+sqlmodel
+alembic
