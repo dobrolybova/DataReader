@@ -1,6 +1,6 @@
 # Service reads data from websocket and stores it to files (data.json*)
 
-# Data format:
+Data format:
 ```
 {
  "component": "Realbridge Air Amplifier",
@@ -9,9 +9,9 @@
  "model": "mh 80151"
  }
  ```
-# Data in wrong format is not stored (warning is printed)
+Data in wrong format is not stored (warning is printed)
 
- # Data could be retrieved by http request:
- http://localhost:8000/messages
- # or with pagination
+ Data could be retrieved by http request:<p>
+ http://localhost:8000/messages <p>
+ or with pagination<p>
  http://localhost:8000/messages?offset=20&limit=10
