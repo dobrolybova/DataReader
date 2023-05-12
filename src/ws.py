@@ -1,14 +1,29 @@
 import asyncio
 import json
+from json import JSONDecodeError
 from logging import getLogger
+from typing import Protocol
 
 import websockets
-from db_storage import write
-from file_storage import read
+
+from file_storage import FileStorage
+from db_storage import DbStorage
 from schema import is_schema_matched
-# from file_storage import write, read
+from config import Storage, STORAGE
 
 logger = getLogger(__name__)
+
+
+class StorageInterface(Protocol):
+    async def read(self, limit: int, offset: int) -> list:
+        ...
+
+    async def write(self, data: dict[str, str]) -> None:
+        ...
+
+
+storage_map = {Storage.DB: DbStorage, Storage.FILE: FileStorage}
+storage: StorageInterface = storage_map[STORAGE]()
 
 
 async def ws_client() -> None:
@@ -30,7 +45,7 @@ async def ws_client() -> None:
 
             if is_schema_matched(js):
                 logger.info(f"{js}")
-                await write(js)
+                await storage.write(js)
             else:
                 logger.error(f"Not valid data: {js}")
 

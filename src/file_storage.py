@@ -1,27 +1,24 @@
-import glob
-import json
 import os
 from logging import getLogger
 
-from timed_rotating_text_file import TimedRotatingTextFile
+import aiofiles
+from config import FILE_NAME
 
 logger = getLogger(__name__)
 
 
-def write(data: dict[str, str]) -> None:
-    storage_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data.json")
-    with TimedRotatingTextFile(storage_file, when="m", backup_count=5) as fp:
-        fp.write(data + "\n")
+class FileStorage:
+    def __init__(self):
+        self.storage_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../" + FILE_NAME + ".json")
 
+    async def write(self, data: dict[str, str]) -> None:
+        async with aiofiles.open(self.storage_file, mode='a') as fp:
+            await fp.write(str(data) + "\n")
 
-def read() -> list[str]:
-    file_manes = [f for f in glob.glob("../*.json*")]
-    file_manes.reverse()
-    logger.info(f"read data from files: {file_manes}")
-    data = ""
-    for file_name in file_manes:
-        with open(file_name) as fp:
-            data += fp.read()
-    data_list = data.split("\n")
-    data_list.remove("")
-    return data_list
+    async def read(self, _limit: int, _offset: int) -> list:
+        async with aiofiles.open(self.storage_file, mode='r') as fp:
+            data = await fp.read()
+            data = data.replace("'", "\"")
+        data_list = data.split("\n")
+        data_list.remove("")
+        return data_list

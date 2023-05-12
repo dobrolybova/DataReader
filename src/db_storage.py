@@ -1,20 +1,18 @@
+import asyncio
 from logging import getLogger
 from typing import AsyncIterator
 
-from sqlalchemy import Column, Text, Integer
+from config import DATABASE
+from sqlalchemy import Column, Text, Integer, select
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from config import DATABASE
 
 logger = getLogger(__name__)
-
-engine = create_async_engine(URL(**DATABASE), future=True, echo=True)
-async_session = sessionmaker(engine, class_=AsyncSession)
-Base = declarative_base()
+base = declarative_base()
 
 
-class Messages(Base):
+class Messages(base):
     __tablename__ = 'messages'
 
     id = Column(Integer(), primary_key=True)
@@ -24,14 +22,17 @@ class Messages(Base):
     model = Column(Text())
 
 
-async def get_db() -> AsyncIterator[AsyncSession]:
-    async with async_session() as session:
-        yield session
+class DbStorage:
+    def __init__(self):
+        self.engine = create_async_engine(URL(**DATABASE), future=True, echo=True)
+        self.async_session = sessionmaker(self.engine, class_=AsyncSession)
 
+    async def read(self, limit: int, offset: int) -> list:
+        return [mes for mes in await self.async_session().scalars(select(Messages).limit(limit).offset(offset))]
 
-async def write(data: dict[str, str]) -> None:
-    logger.debug(f"write message to DB {data}")
-    async with async_session() as session:
-        async with session.begin():
-            session.add(Messages(**data))
-            await session.commit()
+    async def write(self, data: dict[str, str]) -> None:
+        logger.debug(f"write message to DB {data}")
+        async with self.async_session() as session:
+            async with session.begin():
+                session.add(Messages(**data))
+                await session.commit()

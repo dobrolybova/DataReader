@@ -1,13 +1,9 @@
 websockets
 pydantic
-jsonschema
-timed_rotating_text_file
 fastapi
 fastapi_pagination
 uvicorn
-psycopg2-binary
 sqlalchemy
 asyncpg
-fastapi_sqla
-sqlmodel
 alembic
+aiofiles
