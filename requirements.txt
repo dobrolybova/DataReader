@@ -7,3 +7,7 @@ sqlalchemy
 asyncpg
 alembic
 aiofiles
+pytest
+httpx
+pytest-env
+asynctest

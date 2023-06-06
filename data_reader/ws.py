@@ -2,31 +2,16 @@ import asyncio
 import json
 from json import JSONDecodeError
 from logging import getLogger
-from typing import Protocol
 
 import websockets
 
-from file_storage import FileStorage
-from db_storage import DbStorage
+from interface import StorageInterface
 from schema import is_schema_matched
-from config import Storage, STORAGE
 
 logger = getLogger(__name__)
 
 
-class StorageInterface(Protocol):
-    async def read(self, limit: int, offset: int) -> list:
-        ...
-
-    async def write(self, data: dict[str, str]) -> None:
-        ...
-
-
-storage_map = {Storage.DB: DbStorage, Storage.FILE: FileStorage}
-storage: StorageInterface = storage_map[STORAGE]()
-
-
-async def ws_client() -> None:
+async def ws_client(storage: StorageInterface) -> None:
     async with websockets.connect('ws://localhost:8080') as websocket:
         while True:
 

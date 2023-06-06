@@ -1,6 +1,4 @@
-import asyncio
 from logging import getLogger
-from typing import AsyncIterator
 
 from config import DATABASE
 from sqlalchemy import Column, Text, Integer, select

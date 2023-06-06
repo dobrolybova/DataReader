@@ -1,7 +1,4 @@
-import json
-from json.decoder import JSONDecodeError
 from logging import getLogger
-from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import ValidationError
