@@ -1,5 +1,9 @@
+from unittest.mock import patch
+
 import asynctest
 import pytest
+import sqlalchemy.ext.asyncio
+import sqlalchemy.orm
 from fastapi.testclient import TestClient
 
 from config import Storage, AppSettings
@@ -17,6 +21,22 @@ def srv_file():
 def client_file() -> TestClient:
     settings = AppSettings()
     settings.STORAGE = Storage.FILE.name
+    return TestClient(Application(settings).app)
+
+
+@pytest.fixture()
+def srv_db():
+    settings = AppSettings(STORAGE=Storage.DB.name)
+    app = Application(settings).app
+    return app
+
+
+@pytest.fixture()
+@patch.object(sqlalchemy.ext.asyncio, "create_async_engine", return_value=None)
+@patch.object(sqlalchemy.orm, "sessionmaker", return_value=None)
+def client_db() -> TestClient:
+    settings = AppSettings()
+    settings.STORAGE = Storage.DB.name
     return TestClient(Application(settings).app)
 
 
