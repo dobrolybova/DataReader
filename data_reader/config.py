@@ -24,6 +24,6 @@ class AppSettings(BaseSettings):
     LOG_FILE: str = ""
     LOG_FORMAT: str = '%(asctime)s,%(levelname)-5s %(filename)s:%(funcName)s:%(lineno)-5d %(message)s'
 
-    STORAGE: str = Storage.FILE.name
+    STORAGE: str = Storage.DB.name
 
     FILE_NAME: str = "data"
