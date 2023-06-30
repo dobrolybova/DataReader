@@ -11,3 +11,5 @@ pytest
 httpx
 pytest-env
 asynctest
+asyncio
+pytest-asyncio
